@@ -10,11 +10,11 @@ gulp minall   执行合并js、css，并且压缩js、css、html、img
 压缩钱 需在要html 文件中，为要压缩的js，和css 添加注释，
 如：
 js：
-<!-- build:js js/main.min.js -->
+// <!-- build:js js/main.min.js -->
     <script src="js/jquery.min.js"></script>
-    <script src="js/canv.js"></script>
-<!-- endbuild -->
+    <script src="js/canv.js"></script>
+// <!-- endbuild -->
 css：
-<!-- build:css css/combined.css -->
-    <link rel="stylesheet" href="css/style.css">
-<!-- endbuild -->
+// <!-- build:css css/combined.css -->
+    <link rel="stylesheet" href="css/style.css">
+// <!-- endbuild -->
