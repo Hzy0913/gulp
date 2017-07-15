@@ -9,8 +9,9 @@ var gulp = require('gulp'),
     htmlmin = require('gulp-htmlmin'),
     imagemin = require('gulp-imagemin'),
     tinypng = require('gulp-tinypng-compress'),
-    cleanCSS = require('gulp-clean-css');
-
+    cleanCSS = require('gulp-clean-css'),
+    useref = require('gulp-useref'),
+    gulpSequence = require('gulp-sequence')
 
 // 编译less，其中plumber是防止出错崩溃的插件
 gulp.task('less', function() {
@@ -22,6 +23,11 @@ gulp.task('less', function() {
 
 
 // 压缩html
+//************************
+//替换html内容
+//.pipe(replace('<link rel="stylesheet" href="css/style.css">',' <link rel="stylesheet" href="css/main.min.css">'))
+//.pipe(replace('<script src="js/jquery.min.js"></script>','<script src="js/main.min.js"></script>'))
+//************************
 gulp.task('htmlmin', function () {
     var options = {
         removeComments: true,//清除HTML注释
@@ -30,12 +36,10 @@ gulp.task('htmlmin', function () {
         removeEmptyAttributes: true,//删除所有空格作属性值 <input id="" /> ==> <input />
         removeScriptTypeAttributes: true,//删除<script>的type="text/javascript"
         removeStyleLinkTypeAttributes: true,//删除<style>和<link>的type="text/css"
-        minifyJS: true,//压缩页面JS
+        //minifyJS: true,//压缩页面JS
         minifyCSS: true//压缩页面CSS
     };
-    gulp.src('*.html')
-        .pipe(replace('<link rel="stylesheet" href="css/style.css">',' <link rel="stylesheet" href="css/main.min.css">'))
-        .pipe(replace('<script src="js/jquery.min.js"></script>','<script src="js/main.min.js"></script>'))
+    gulp.src('dist/*.html')
         .pipe(htmlmin(options))
         .pipe(gulp.dest('dist/'));
 });
@@ -46,8 +50,6 @@ gulp.task('imgmin', function () {
         .pipe(imagemin())
         .pipe(gulp.dest('dist/img'));
 });
-
-
 //key
 //If3g1qF1A4jQRa9MtTYt9ypAvCyS4JL8
 //ctq8a3dQWrZHA9BDcrfSZafIko9OyJAC
@@ -62,6 +64,36 @@ gulp.task("minpng", function(){
 })
 
 
+
+// minall  压缩js css
+gulp.task('allsrc', function () {
+    return gulp.src('*.html')
+        .pipe(useref())
+        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(uglify())
+        .pipe(gulp.dest('dist'));
+});
+// useref  链接 css js
+gulp.task('mincon', function () {
+    return gulp.src('*.html')
+        .pipe(useref())
+        .pipe(gulp.dest('dist'))
+});
+
+// 压缩css，存到dist/css
+gulp.task('mincss', function() {
+    gulp.src(['dist/css/*.css'])
+        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(gulp.dest('dist/css'));
+});
+
+gulp.task('minjs', function() {
+    gulp.src(['dist/js/*.js'])
+        .pipe(uglify())
+        .pipe(gulp.dest('dist/js'));
+});
+
+
 // 将所有css文件连接为一个文件并压缩，存到dest/css
 gulp.task('concatCss', function() {
     gulp.src(['css/*.css'])
@@ -70,7 +102,6 @@ gulp.task('concatCss', function() {
         .pipe(gulp.dest('dist/css'));
 });
 // 将所有js文件连接为一个文件并压缩，存到dest/js
-
 // 按顺序合并js  gulp.src(['js/public.js','js/main.js','js/mobile.main.js'])
 gulp.task('concatJs', function() {
     gulp.src(['js/jquery.min.js','js/skrollr.js','js/main.js'])
@@ -78,10 +109,17 @@ gulp.task('concatJs', function() {
         .pipe(uglify())
         .pipe(gulp.dest('dist/js'));
 });
-//js/three.min.js','js/bas.min.1.1.3.js','js/three_post.js','js/OrbitControls.js','js/LuminosityHighPassShader.js','js/UnrealBloomPass.js','js/1b4e36af86e7ae4e4d4f8a3dc.js','js/TweenMax.min.js','js/index.js',
 
-//**************************//
-//XCON 项目  HTML里注释掉 后面两个js  执行这句上线
+
+//  压缩项目(css)
+gulp.task( 'minpro', gulpSequence( 'mincon', 'mincss','imgmin','htmlmin' ) );
+//  压缩项目(css,js)
+gulp.task( 'minall', gulpSequence( 'mincon', 'mincss', 'minjs','imgmin','htmlmin' ) );
+
+//压缩js css 注释
+//<!-- build:js js/main.min.js -->     <!-- endbuild -->
+//<!-- build:css css/combined.css -->    <!-- endbuild -->
+
 gulp.task('min', ['htmlmin','concatCss','concatJs','imgmin']);
 // 默认任务
 gulp.task('default',['watch']);
