@@ -15,10 +15,10 @@ var gulp = require('gulp'),
 
 // 编译less，其中plumber是防止出错崩溃的插件
 gulp.task('less', function() {
-    gulp.src('src/less/*.less')
+    gulp.src('less/*.less')
         .pipe(plumber())
         .pipe(less())
-        .pipe(gulp.dest('dist/css'));
+        .pipe(gulp.dest('css'));
 });
 
 
@@ -116,9 +116,6 @@ gulp.task( 'minpro', gulpSequence( 'mincon', 'mincss','imgmin','htmlmin' ) );
 //  压缩项目(css,js)
 gulp.task( 'minall', gulpSequence( 'mincon', 'mincss', 'minjs','imgmin','htmlmin' ) );
 
-//压缩js css 注释
-//<!-- build:js js/main.min.js -->     <!-- endbuild -->
-//<!-- build:css css/combined.css -->    <!-- endbuild -->
 
 gulp.task('min', ['htmlmin','concatCss','concatJs','imgmin']);
 // 默认任务
@@ -139,12 +136,11 @@ gulp.task('watch', function() {
     //gulp.watch('src/jade/**', ['jade']);
     server: "./"
     //gulp.watch('src/coffee/**', ['coffee']);
-    //gulp.watch('src/less/**', ['less']);
-    //
-    //
-    //// 合并压缩
-    //gulp.watch('dist/css/*.css', ['concatCss']);
-    //gulp.watch('dist/js/*.js', ['concatJs']);
+
+
+    //// 预处理less
+    gulp.watch('less/**', ['less']);
+    
 
 
     // 自动刷新
