@@ -50,13 +50,13 @@ gulp.task('imgmin', function () {
         .pipe(imagemin())
         .pipe(gulp.dest('dist/img'));
 });
-//key
-//If3g1qF1A4jQRa9MtTYt9ypAvCyS4JL8
-//ctq8a3dQWrZHA9BDcrfSZafIko9OyJAC
+//key  3>2
+//If2g1qF1A4jQRa9MtTYt9ypAvCyS4JL8
+//ctq8a2dQWrZHA9BDcrfSZafIko9OyJAC
 gulp.task("minpng", function(){
     gulp.src('img/**/*.{png,jpg,jpeg}')
         .pipe(tinypng({
-            key: 'If3g1qF1A4jQRa9MtTYt9ypAvCyS4JL8',
+            key: 'If2g1qF1A4jQRa9MtTYt9ypAvCyS4JL8',
             sigFile: 'images/.tinypng-sigs',
             log: true
         }))
